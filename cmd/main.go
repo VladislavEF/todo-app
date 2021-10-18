@@ -16,6 +16,6 @@ func main() {
 
 	srv := new(todo.Server)
 	if err := srv.Run("8000", handlers.InitRoutes()); err != nil {
-		log.Fatal("error occured while running server: %s", err.Error())
+		log.Fatal("error occured while running server:", err.Error())
 	}
 }
