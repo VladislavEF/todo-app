@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/VladislavEF/todo-app"
@@ -9,18 +8,21 @@ import (
 	"github.com/VladislavEF/todo-app/pkg/repository"
 	"github.com/VladislavEF/todo-app/pkg/service"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/subosito/gotenv"
 )
 
 func main() {
 
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+
 	if err := initConfig(); err != nil {
-		log.Fatal("error initialazing configs:", err.Error())
+		logrus.Fatal("error initialazing configs:", err.Error())
 	}
 
 	if err := gotenv.Load(); err != nil {
-		log.Fatal("error loading env variables:", err.Error())
+		logrus.Fatal("error loading env variables:", err.Error())
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
@@ -32,7 +34,7 @@ func main() {
 		Password: os.Getenv("DB_PASSWORD"),
 	})
 	if err != nil {
-		log.Fatal("failed to initialize database:", err.Error())
+		logrus.Fatal("failed to initialize database:", err.Error())
 	}
 
 	repos := repository.NewRepository(db)
@@ -41,7 +43,7 @@ func main() {
 
 	srv := new(todo.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		log.Fatal("error occured while running server:", err.Error())
+		logrus.Fatal("error occured while running server:", err.Error())
 	}
 }
 
