@@ -5,10 +5,14 @@ import (
 
 	"github.com/VladislavEF/todo-app"
 	"github.com/VladislavEF/todo-app/pkg/handlers"
+	"github.com/VladislavEF/todo-app/pkg/repository"
+	"github.com/VladislavEF/todo-app/pkg/service"
 )
 
 func main() {
-	handlers := new(handlers.Handler)
+	repos := repository.NewRepository()
+	service := service.NewService(repos)
+	handlers := handlers.NewHandler(service)
 
 	srv := new(todo.Server)
 	if err := srv.Run("8000", handlers.InitRoutes()); err != nil {
